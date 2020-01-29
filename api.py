@@ -1,1 +1,3 @@
-print("Hello World!")
+def api():
+    print("Hello World!")
+    return 0
