@@ -1,7 +1,10 @@
-from api import api
+from api import get_weather
 
-def test():
-    assert api() == 0
+def test1():
+    assert get_weather("Boston") == 0
 
-def new_test():
-    assert api() == 0
+def test2():
+    assert get_weather("London") == 0
+
+def test3():
+    assert get_weather("Blah Blah") == -1

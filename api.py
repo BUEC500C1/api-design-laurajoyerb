@@ -1,76 +1,54 @@
-# Python program to find current
-# weather details of any city
-# using openweathermap api
+# Laura Joy Erb
+# Professor Osama Alshaykh
+# EC500: Building Software
+# Project 2: API Design
 
 # import required modules
 import requests
 import json
 from config import api_key
 
-# base_url variable to store url
-base_url = "http://api.openweathermap.org/data/2.5/weather?"
+def print_weather(response):
 
-# Give city name
-city_name = input("Enter city name : ")
+    city_name = response["name"]
+    feels_like = response["main"]["feels_like"]
+    temperature = response["main"]["temp"]
+    pressure = response["main"]["pressure"]
+    humidity = response["main"]["humidity"]
+    weather_description = response["weather"][0]["description"]
+    wind_speed = response["wind"]["speed"]
 
-# complete_url variable to store
-# complete url address
-complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+    print("Weather for " + city_name + ":")
+    print("\tTemperature: ", end="")
+    print(round(temperature - 273.15, 2), end="")
+    print("ºC")
+    print("\tFeels Like: ", end="")
+    print(round(feels_like - 273.15, 2), end="")
+    print("ºC")
+    print("\tPressure: ", end="")
+    print(pressure)
+    print("\tHumidity: ", end="")
+    print(humidity, end="")
+    print("%")
+    print("\tCurrent weather status: " + weather_description)
+    print("\tWind Speed: ", end="")
+    print(wind_speed)
 
-# get method of requests module
-# return response object
-response = requests.get(complete_url)
+def get_weather(city):
+    base_url = "http://api.openweathermap.org/data/2.5/weather?"
+    complete_url = base_url + "appid=" + api_key + "&q=" + city
 
-# json method of response object
-# convert json format data into
-# python format data
-x = response.json()
+    res = requests.get(complete_url)
 
-# Now x contains list of nested dictionaries
-# Check the value of "cod" key is equal to
-# "404", means city is found otherwise,
-# city is not found
-if x["cod"] != "404":
+    response = res.json()
 
-	# store the value of "main"
-	# key in variable y
-	y = x["main"]
+    if response["cod"] != "404":
 
-	# store the value corresponding
-	# to the "temp" key of y
-	current_temperature = y["temp"]
+        print_weather(response)
+        return 0
 
-	# store the value corresponding
-	# to the "pressure" key of y
-	current_pressure = y["pressure"]
+    else:
+        print("Error: Could not find city")
+        return -1
 
-	# store the value corresponding
-	# to the "humidity" key of y
-	current_humidiy = y["humidity"]
-
-	# store the value of "weather"
-	# key in variable z
-	z = x["weather"]
-
-	# store the value corresponding
-	# to the "description" key at
-	# the 0th index of z
-	weather_description = z[0]["description"]
-
-	# print following values
-	print(" Temperature (in kelvin unit) = " +
-            str(current_temperature) +
-            "\n atmospheric pressure (in hPa unit) = " +
-            str(current_pressure) +
-            "\n humidity (in percentage) = " +
-            str(current_humidiy) +
-            "\n description = " +
-            str(weather_description))
-
-else:
-	print(" City Not Found ")
-
-
-def api():
-    print("Hello World!")
-    return 0
+get_weather("Boston")
