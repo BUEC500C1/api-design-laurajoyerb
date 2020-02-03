@@ -5,7 +5,6 @@
 
 import flask
 import requests
-import json
 import csv
 from flask import jsonify
 from flask import request
@@ -14,12 +13,14 @@ from config import api_key
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-#  finds airport name given an ident
+#  finds airport name given an ident code
 def get_city_from_ident(ident):
     with open("airports.csv", 'r') as csvfile:
         csvreader = csv.reader(csvfile)
         for row in csvreader:
+            #  checks each row for ident code
             if row[1] == ident:
+                #  returns municipality name once ident code has been found
                 return row[10]
     return ""
 
@@ -33,6 +34,7 @@ def get_city_from_name(airport_name):
     return ""
 
 def print_weather(weather):
+    #  utility function for printing weather data received from openweathermap
     print("Weather for " + weather["city_name"] + ":")
     print("\tTemperature: ", end="")
     print(round(weather["temp"], 2), end="")
@@ -50,6 +52,7 @@ def print_weather(weather):
     print(weather["wind_speed"])
 
 def parse_weather(response):
+    #  takes only relevant information from response and parses into a weather dict
     city_name = response["name"]
     feels_like = response["main"]["feels_like"]
     temperature = response["main"]["temp"]
@@ -70,13 +73,14 @@ def parse_weather(response):
     return weather
 
 def get_weather(city):
+    #  makes api call to openweathermap
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
     complete_url = base_url + "appid=" + api_key + "&q=" + city
 
     res = requests.get(complete_url)
-
     response = res.json()
 
+    # as long as the server responds, parse response into weather dict
     if response["cod"] != "404":
 
         weather_dict = parse_weather(response)
@@ -99,10 +103,10 @@ def api_all():
     else:
         return jsonify(weath)
 
-# for specifying an airport with ident
+# for specifying an airport with ident or airport name
 @app.route('/api/weather/', methods=['GET'])
 def api_ident():
-    #  gets ident code from url
+    #  gets ident code or airport name from url
     if 'ident' in request.args:
         ident = request.args['ident']
         city_name = get_city_from_ident(ident)
@@ -110,10 +114,13 @@ def api_ident():
         name = request.args['name']
         city_name = get_city_from_name(name)
     else:
+        #  executes if no fields are specified
         return "<h1>Error</h1> <p>No fields provided. Please specify either an ident code or an airport name.</p>"
 
+    # empty string is returned if there is no matching field in the csv file
     if city_name == "":
         return "<h1>Error</h1><p>City could not be found for given ident code or airport name</p>"
+
     weath = get_weather(city_name)
 
     if weath == -1:
