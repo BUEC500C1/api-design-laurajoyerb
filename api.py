@@ -7,10 +7,29 @@ import flask
 import requests
 import json
 import jsonify
+import csv
 from config import api_key
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+#  finds airport name given an ident
+def get_city_from_ident(ident):
+    with open("airports.csv", 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            if row[1] == ident:
+                return row[10]
+    return ""
+
+#  finds airport name given an airport name
+def get_city_from_name(airport_name):
+    with open("airports.csv", 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            if row[3] == airport_name:
+                return row[10]
+    return ""
 
 def print_weather(weather):
     print("Weather for " + weather["city_name"] + ":")
@@ -60,7 +79,6 @@ def get_weather(city):
     if response["cod"] != "404":
 
         weather_dict = parse_weather(response)
-        print_weather(weather_dict)
         return weather_dict
 
     else:
@@ -72,9 +90,13 @@ def get_weather(city):
 def home():
     return "<h1>Weather API</h1><p>by Laura Joy Erb</p>"
 
+# Default routing if no city specified
 @app.route('/api/weather', methods=['GET'])
 def api():
     weath = get_weather("Boston")
-    return weath
+    if weath == -1:
+        return "<h1>Error</h1><p>City could not be found</p>"
+    else:
+        return json.dumps(weath)
 
 app.run()
