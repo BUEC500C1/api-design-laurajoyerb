@@ -1,8 +1,3 @@
-# Laura Joy Erb
-# Professor Osama Alshaykh
-# EC500: Building Software
-# Project 2: API Design
-
 import flask
 import requests
 import csv
