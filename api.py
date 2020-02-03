@@ -6,8 +6,8 @@
 import flask
 import requests
 import json
-import jsonify
 import csv
+from flask import jsonify
 from config import api_key
 
 app = flask.Flask(__name__)
@@ -85,7 +85,6 @@ def get_weather(city):
         print("Error: Could not find city")
         return -1
 
-
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>Weather API</h1><p>by Laura Joy Erb</p>"
@@ -97,6 +96,6 @@ def api():
     if weath == -1:
         return "<h1>Error</h1><p>City could not be found</p>"
     else:
-        return json.dumps(weath)
+        return jsonify(weath)
 
 app.run()
