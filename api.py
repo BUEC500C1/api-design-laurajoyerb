@@ -8,6 +8,7 @@ import requests
 import json
 import csv
 from flask import jsonify
+from flask import request
 from config import api_key
 
 app = flask.Flask(__name__)
@@ -90,9 +91,31 @@ def home():
     return "<h1>Weather API</h1><p>by Laura Joy Erb</p>"
 
 # Default routing if no city specified
-@app.route('/api/weather', methods=['GET'])
-def api():
+@app.route('/api/weather/all', methods=['GET'])
+def api_all():
     weath = get_weather("Boston")
+    if weath == -1:
+        return "<h1>Error</h1><p>City could not be found</p>"
+    else:
+        return jsonify(weath)
+
+# for specifying an airport with ident
+@app.route('/api/weather/', methods=['GET'])
+def api_ident():
+    #  gets ident code from url
+    if 'ident' in request.args:
+        ident = request.args['ident']
+        city_name = get_city_from_ident(ident)
+    elif 'name' in request.args:
+        name = request.args['name']
+        city_name = get_city_from_name(name)
+    else:
+        return "<h1>Error</h1> <p>No fields provided. Please specify either an ident code or an airport name.</p>"
+
+    if city_name == "":
+        return "<h1>Error</h1><p>City could not be found for given ident code or airport name</p>"
+    weath = get_weather(city_name)
+
     if weath == -1:
         return "<h1>Error</h1><p>City could not be found</p>"
     else:
