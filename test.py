@@ -27,7 +27,7 @@ def test_invalid_name():
     assert get_city_from_name("heyyy") == ""
 
 def test_invalid1():
-    assert get_weather("234") == 0
+    assert get_weather("234") == -1
 
 def test_invalid2():
-    assert get_weather("") == 0
+    assert get_weather("") == -1

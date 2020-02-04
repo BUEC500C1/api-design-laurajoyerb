@@ -76,7 +76,7 @@ def get_weather(city):
     response = res.json()
 
     # as long as the server responds, parse response into weather dict
-    if response["cod"] != "404":
+    if (response["cod"] != "404") & (response["cod"] != "400"):
 
         weather_dict = parse_weather(response)
         return weather_dict
