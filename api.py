@@ -3,7 +3,7 @@ import requests
 import csv
 from flask import jsonify
 from flask import request
-from config import api_key
+from config2 import api_key
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
