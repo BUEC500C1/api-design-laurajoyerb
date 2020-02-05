@@ -1,6 +1,5 @@
-from api import get_city_from_ident
-from api import get_city_from_name
-from api import get_weather
+from airport_func import get_city_from_ident
+from airport_func import get_city_from_name
 
 def test_ident1():
     assert get_city_from_ident("00AK") == "Anchor Point"
