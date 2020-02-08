@@ -1,5 +1,6 @@
 import csv
 
+
 #  finds airport name given an ident code
 def get_city_from_ident(ident):
     with open("airports.csv", 'r') as csvfile:
@@ -10,6 +11,7 @@ def get_city_from_ident(ident):
                 #  returns municipality name once ident code has been found
                 return row[10]
     return ""
+
 
 #  finds airport name given an airport name
 def get_city_from_name(airport_name):
